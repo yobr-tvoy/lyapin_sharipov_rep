@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список дел — поиск и сортировка</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        .search-form { margin: 20px 0; }
+        .search-form input { padding: 8px; width: 70%; }
+        .search-form button { padding: 8px 15px; background: #007BFF; color: white; border: none; cursor: pointer; }
+        .filters a { margin-right: 10px; text-decoration: none; color: #007BFF; }
+        .task { border-bottom: 1px solid #ddd; padding: 10px 0; }
+        .done { text-decoration: line-through; color: gray; }
+        .priority-high { color: red; font-weight: bold; }
+        .priority-medium { color: orange; }
+        .priority-low { color: green; }
+        .date { font-size: 0.8em; color: #555; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📝 Мои задачи</h1>
+
+    <!-- Форма поиска (ПР №7) -->
+    <form action="/search" method="get" class="search-form">
+        <input type="text" name="q" placeholder="Поиск по задачам..." value="{{ search_query or '' }}">
+        <button type="submit">🔍 Найти</button>
+    </form>
+
+    <!-- Ссылки для сортировки (ПР №8) -->
+    <div class="filters">
+        <strong>Сортировать:</strong>
+        <a href="/sort/date">📅 По дате (новые)</a> |
+        <a href="/sort/status">✅ По статусу</a> |
+        <a href="/sort/priority">⭐ По приоритету</a> |
+        <a href="/sort/alpha">🔤 По алфавиту</a>
+        <a href="/">🔄 Сбросить</a>
+    </div>
+
+    <hr>
+
+    <h2>📌 Задачи</h2>
+    {% if tasks %}
+        {% for task in tasks %}
+            <div class="task">
+                <strong>
+                    {% if task.done %}
+                        <span class="done">{{ task.text }}</span>
+                    {% else %}
+                        {{ task.text }}
+                    {% endif %}
+                </strong><br>
+
+                <span class="date">📅 {{ task.date }}</span><br>
+
+                <span class="priority-{{ 'high' if task.priority == 'высокий' else 'medium' if task.priority == 'средний' else 'low' }}">
+                    ⚡ {{ task.priority|capitalize }}
+                </span>
+
+                {% if task.done %}
+                    <span style="color: green;">✅ Выполнено</span>
+                {% else %}
+                    <span style="color: red;">⏳ Не выполнено</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>😕 Задач не найдено.</p>
+    {% endif %}
+</div>
+</body>
+</html>
